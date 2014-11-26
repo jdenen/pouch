@@ -1,6 +1,8 @@
 require "pouch/version"
 
 module Pouch
+
+  class ContextualReplacementError < StandardError; end
   
   def self.included base
     base.extend self
@@ -15,6 +17,7 @@ module Pouch
     @browser = browser
     @context = standardize opts[:context] if opts[:context]
     visit if self.respond_to?(:visit) && start
+    contextualize_methods
   end
 
   def browser
@@ -39,6 +42,31 @@ module Pouch
   end
 
   private
+
+  def contextualize_methods
+    return unless context
+    context.each_with_object([]) do |ctxt, array|
+      next unless array.flatten.empty?
+      array << match_and_replace(ctxt)
+    end
+  end
+
+  def match_and_replace context
+    get_match(context).map{ |mthd| self.method mthd }.each{ |mthd| replace_method mthd, context }
+  end
+
+  def get_match context
+    methods.select{ |mthd| mthd.to_s.start_with? "#{context}_" }.each_with_object([]) do |mthd, array|
+      unless respond_to? mthd.to_s.gsub("#{context}_", "")
+        raise ContextualReplacementError, "#{self.class} defined no standard method for replacement '#{mthd}'"
+      end
+      array << mthd
+    end
+  end
+
+  def replace_method method, context
+    (class << self; self; end).class_eval{ define_method method.name.to_s.gsub("#{context}_",""), method }
+  end
 
   def standardize context
     context.map!{ |c| standardize c } if context.kind_of? Array

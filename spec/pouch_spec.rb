@@ -99,6 +99,9 @@ describe Pouch do
     include Pouch
     element(:a, :generic, id: 'generic')
     element(:a, :blocked, id: 'blocked'){ |link| link.href }
+    element(:a, :different_generic, id: 'generic-diff')
+    element(:a, :different_blocked, id: 'blocked-diff'){ |link| link.href }
+    element(:a, :what_replacement, id: 'no-match')
   end
 
   describe "#browser" do
@@ -119,6 +122,8 @@ describe Pouch do
     let(:browser){ double 'webdriver' }
     let(:element){ double 'html_link' }
     let(:page){ Page3.new browser }
+    let(:diff){ Page3.new browser, context: 'different' }
+    let(:what){ Page3.new browser, context: 'what' }
 
     it "returns the link element by default" do
       expect(browser).to receive(:element_for).with(:a, id:'generic').and_return(element)
@@ -135,6 +140,28 @@ describe Pouch do
       expect(browser).to receive(:element_for).with(:a, id:'blocked').and_return(element)
       expect(element).to receive(:href).and_return("www.test.com")
       expect(page.blocked).to eq "www.test.com"
+    end
+
+    context "with context" do
+      it "uses the replacement method" do
+        expect(browser).to receive(:element_for).with(:a, id:'generic-diff').and_return(element)
+        expect(diff.generic).to eq element
+      end
+
+      it "uses the replacement method with definition block" do
+        expect(browser).to receive(:element_for).with(:a, id:'blocked-diff').and_return(element)
+        expect(element).to receive(:href).and_return("www.diff.com")
+        expect(diff.blocked).to eq "www.diff.com"
+      end
+
+      it "uses the standard method when context matches no replacement" do
+        expect(browser).to receive(:element_for).with(:a, id:'generic').and_return(element)
+        expect(Page3.new(browser, context: 'test').generic).to eq element
+      end
+
+      it "throws an error with replacement but no standard method" do
+        expect{ what.replacement }.to raise_error Pouch::ContextualReplacementError, /Page3 defined no standard method for replacement/
+      end
     end
   end
   
