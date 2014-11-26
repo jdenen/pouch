@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Johnson Denen"]
   spec.email         = ["jdenen@manta.com"]
   spec.summary       = %q{A flexible page object DSL for responsive UI testing}
-  spec.description   = %q{A flexible page object DSL for responsive UI testing via automated browsers and devices}
+  spec.description   = %q{A flexible page object DSL for responsive UI testing}
   spec.homepage      = "https://github.com/jdenen/pouch"
   spec.license       = "MIT"
 
