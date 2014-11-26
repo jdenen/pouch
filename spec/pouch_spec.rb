@@ -95,9 +95,13 @@ describe Pouch do
     end
   end
 
+  class Page3
+    include Pouch
+    element(:a, :generic, id: 'generic')
+    element(:a, :blocked, id: 'blocked'){ |link| link.href }
+  end
+
   describe "#browser" do
-    class Page3; include Pouch; end
-    
     it "returns the browser instance" do
       obj = Page3.new 'webdriver'
       expect(obj.browser).to eq 'webdriver'
@@ -105,11 +109,32 @@ describe Pouch do
   end
 
   describe "#context" do
-    class Page4; include Pouch; end
-    
     it "returns the page object context" do
-      obj = Page4.new 'webdriver', context: ['one', :two, ['three']]
+      obj = Page3.new 'webdriver', context: ['one', :two, ['three']]
       expect(obj.context).to eq ['one', 'two', 'three']
+    end
+  end
+
+  describe "#element" do
+    let(:browser){ double 'webdriver' }
+    let(:element){ double 'html_link' }
+    let(:page){ Page3.new browser }
+
+    it "returns the link element by default" do
+      expect(browser).to receive(:element_for).with(:a, id:'generic').and_return(element)
+      expect(page.generic).to eq element
+    end
+
+    it "returns an element that can be clicked" do
+      expect(browser).to receive(:element_for).with(:a, id:'generic').and_return(element)
+      expect(element).to receive(:click)
+      page.generic.click
+    end
+
+    it "returns the result of the definition block" do
+      expect(browser).to receive(:element_for).with(:a, id:'blocked').and_return(element)
+      expect(element).to receive(:href).and_return("www.test.com")
+      expect(page.blocked).to eq "www.test.com"
     end
   end
   
