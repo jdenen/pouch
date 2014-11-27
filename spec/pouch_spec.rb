@@ -18,6 +18,18 @@ describe Pouch do
       obj = Page2.new 'webdriver'
       expect(obj.instance_variable_get :@browser).to eq 'webdriver'
     end
+
+    it "creates @timeout variable" do
+      obj = Page2.new 'webdriver'
+      expect(obj.instance_variable_get :@timeout).to eq 10
+    end
+
+    context "with :timeout option" do
+      it "creates @timeout variable" do
+        obj = Page2.new 'webdriver', timeout: 5
+        expect(obj.instance_variable_get :@timeout).to eq 5
+      end
+    end
         
     context "when instance does not respond to #visit" do
       it "doesn't navigate to page_url if start=true" do
@@ -106,6 +118,22 @@ describe Pouch do
     it "returns the page object context" do
       obj = Page.new 'webdriver', context: ['one', :two, ['three']]
       expect(obj.context).to eq ['one', 'two', 'three']
+    end
+  end
+
+  describe "#timeout" do
+    context "without setting a custom timeout interval" do
+      it "returns the page object default timeout" do
+        obj = Page.new 'webdriver'
+        expect(obj.timeout).to eq 10
+      end
+    end
+
+    context "after passing :timeout option to #initialize" do
+      it "returns the custom timeout" do
+        obj = Page.new 'webdriver', timeout: 5
+        expect(obj.timeout).to eq 5
+      end
     end
   end
   

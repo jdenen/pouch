@@ -18,7 +18,11 @@ module Pouch
     
     @browser = browser
     @context = standardize opts[:context] if opts[:context]
+    @timeout = opts[:timeout] || 10
+
+    set_timer if self.respond_to? :set_timer
     visit if self.respond_to?(:visit) && start
+    
     contextualize_methods
   end
 
@@ -30,6 +34,10 @@ module Pouch
     @context
   end
 
+  def timeout
+    @timeout
+  end
+  
   def page_url= str
     define_method :visit do
       self.browser.goto str
