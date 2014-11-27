@@ -67,7 +67,7 @@ describe Pouch::Elements do
   end
 
   describe "#checkbox" do
-    it "calls :element with :checkbox tag" do
+    it "calls :element with :input tag" do
       expect(page).to receive(:element).with(:input, :checkbox_name, {id: 'id', type: 'checkbox'}, [])
       page.send(:checkbox, :checkbox_name, id: 'id')
     end
@@ -81,7 +81,7 @@ describe Pouch::Elements do
   end
 
   describe "#file_field" do
-    it "calls :element with :file_field tag" do
+    it "calls :element with :input tag" do
       expect(page).to receive(:element).with(:input, :ff_name, {id: 'id', type: 'file'}, [])
       page.send(:file_field, :ff_name, id: 'id')
     end
@@ -172,7 +172,7 @@ describe Pouch::Elements do
   end
 
   describe "#radio_button" do
-    it "calls :element with :radio tag" do
+    it "calls :element with :input tag" do
       expect(page).to receive(:element).with(:input, :radio_name, {id: 'id', type: 'radio'}, [])
       page.send(:radio_button, :radio_name, id: 'id')
     end
@@ -221,7 +221,7 @@ describe Pouch::Elements do
   end
 
   describe "#text_area" do
-    it "calls :element with :input tag" do
+    it "calls :element with :textarea tag" do
       expect(page).to receive(:element).with(:textarea, :text_area_name, {id: 'id'}, [])
       page.send(:text_area, :text_area_name, id: 'id')
     end
