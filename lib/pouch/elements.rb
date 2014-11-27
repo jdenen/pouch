@@ -3,11 +3,14 @@ module Pouch
 
     def element tag, name, identifier, *args, &block
       define_method name do
+        timer { browser.element(tag, identifier).visible? }
         return browser.element tag, identifier unless block_given?
         block.call browser.send(:element, tag, identifier), *args
       end
-    end
 
+      define_waiting_methods tag, name, identifier, *args, &block
+    end
+                     
     def button name, identifier, *args, &block
       element :button, name, identifier, args, &block
     end
@@ -113,6 +116,50 @@ module Pouch
 
     def unordered_list name, identifier, *args, &block
       element :ul, name, identifier, args, &block
+    end
+
+    private
+
+    def define_waiting_methods tag, name, identifier, *args, &block
+      define_method "when_#{name}_not_visible" do
+        result = negative_timer { !browser.element(tag, identifier).visible? }
+        unless result
+          raise ElementVisibilityError, "#{name} element is still visible"
+        end
+        self
+      end
+      
+      define_method "when_#{name}_present" do
+        timer { browser.element(tag, identifier).present? }
+        html_element = browser.element tag, identifier
+        return located_element unless block_given?
+        block.call located_element, *args
+      end
+
+      define_method "when_#{name}_not_present" do
+        result = negative_timer { !browser.element(tag, identifier).present? }
+        unless result
+          raise ElementPresenceError, "#{name} element is still present"
+        end
+        self
+      end
+    end
+
+    def timer &block
+      timed_out = Time.now + timeout
+      until Time.now > timed_out
+        result = yield block rescue false
+        break if result
+      end
+    end
+
+    def negative_timer &block
+      timed_out = Time.now + timeout
+      until Time.now > timed_out
+        result = yield_block
+        return result if result
+      end
+      false
     end
 
   end

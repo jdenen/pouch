@@ -12,44 +12,52 @@ describe Pouch::Elements do
     element(:a, :what_replacement, id: 'no-match')
   end
 
-  let(:browser){ double 'webdriver' }
-  let(:element){ double 'html_link' }
+  let(:browser){ double 'webdriver', :element => element }
+  let(:element){ double 'html_link', :visible? => true }
   let(:page){ Page.new browser }
   let(:diff){ Page.new browser, context: 'different' }
   let(:what){ Page.new browser, context: 'what' }
 
   describe "#element" do
     it "returns the link element by default" do
-      expect(browser).to receive(:element).with(:a, id:'generic').and_return(element)
       expect(page.generic).to eq element
     end
 
-    it "returns an element that can be clicked" do
-      expect(browser).to receive(:element).with(:a, id:'generic').and_return(element)
-      expect(element).to receive(:click)
-      page.generic.click
-    end
-
     it "returns the result of the definition block" do
-      expect(browser).to receive(:element).with(:a, id:'blocked').and_return(element)
       expect(element).to receive(:href).and_return("www.test.com")
       expect(page.blocked).to eq "www.test.com"
     end
 
+    it "calls #timer to wait for visible element" do
+      expect(page).to receive(:timer)
+      page.generic
+    end
+
+    it "generates #when_generic_not_visible" do
+      expect(page).to respond_to :when_generic_not_visible
+    end
+
+    it "generates #when_generic_present method" do
+      expect(page).to respond_to :when_generic_present
+    end
+
+    it "generates #when_generic_not_present method" do
+      expect(page).to respond_to :when_generic_not_present
+    end
+
     context "with context" do
       it "uses the replacement method" do
-        expect(browser).to receive(:element).with(:a, id:'generic-diff').and_return(element)
+        expect(browser).to receive(:element).twice.with(:a, id:'generic-diff')
         expect(diff.generic).to eq element
       end
 
       it "uses the replacement method with definition block" do
-        expect(browser).to receive(:element).with(:a, id:'blocked-diff').and_return(element)
         expect(element).to receive(:href).and_return("www.diff.com")
         expect(diff.blocked).to eq "www.diff.com"
       end
 
       it "uses the standard method when context matches no replacement" do
-        expect(browser).to receive(:element).with(:a, id:'generic').and_return(element)
+        expect(browser).to receive(:element).twice.with(:a, id:'generic')
         expect(Page.new(browser, context: 'test').generic).to eq element
       end
 
