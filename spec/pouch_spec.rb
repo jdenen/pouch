@@ -95,73 +95,17 @@ describe Pouch do
     end
   end
 
-  class Page3
-    include Pouch
-    element(:a, :generic, id: 'generic')
-    element(:a, :blocked, id: 'blocked'){ |link| link.href }
-    element(:a, :different_generic, id: 'generic-diff')
-    element(:a, :different_blocked, id: 'blocked-diff'){ |link| link.href }
-    element(:a, :what_replacement, id: 'no-match')
-  end
-
   describe "#browser" do
     it "returns the browser instance" do
-      obj = Page3.new 'webdriver'
+      obj = Page.new 'webdriver'
       expect(obj.browser).to eq 'webdriver'
     end
   end
 
   describe "#context" do
     it "returns the page object context" do
-      obj = Page3.new 'webdriver', context: ['one', :two, ['three']]
+      obj = Page.new 'webdriver', context: ['one', :two, ['three']]
       expect(obj.context).to eq ['one', 'two', 'three']
-    end
-  end
-
-  describe "#element" do
-    let(:browser){ double 'webdriver' }
-    let(:element){ double 'html_link' }
-    let(:page){ Page3.new browser }
-    let(:diff){ Page3.new browser, context: 'different' }
-    let(:what){ Page3.new browser, context: 'what' }
-
-    it "returns the link element by default" do
-      expect(browser).to receive(:element_for).with(:a, id:'generic').and_return(element)
-      expect(page.generic).to eq element
-    end
-
-    it "returns an element that can be clicked" do
-      expect(browser).to receive(:element_for).with(:a, id:'generic').and_return(element)
-      expect(element).to receive(:click)
-      page.generic.click
-    end
-
-    it "returns the result of the definition block" do
-      expect(browser).to receive(:element_for).with(:a, id:'blocked').and_return(element)
-      expect(element).to receive(:href).and_return("www.test.com")
-      expect(page.blocked).to eq "www.test.com"
-    end
-
-    context "with context" do
-      it "uses the replacement method" do
-        expect(browser).to receive(:element_for).with(:a, id:'generic-diff').and_return(element)
-        expect(diff.generic).to eq element
-      end
-
-      it "uses the replacement method with definition block" do
-        expect(browser).to receive(:element_for).with(:a, id:'blocked-diff').and_return(element)
-        expect(element).to receive(:href).and_return("www.diff.com")
-        expect(diff.blocked).to eq "www.diff.com"
-      end
-
-      it "uses the standard method when context matches no replacement" do
-        expect(browser).to receive(:element_for).with(:a, id:'generic').and_return(element)
-        expect(Page3.new(browser, context: 'test').generic).to eq element
-      end
-
-      it "throws an error with replacement but no standard method" do
-        expect{ what.replacement }.to raise_error Pouch::ContextualReplacementError, /Page3 defined no standard method for replacement/
-      end
     end
   end
   

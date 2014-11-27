@@ -1,6 +1,8 @@
 require "pouch/version"
+require "pouch/elements"
 
 module Pouch
+  include Elements
 
   class ContextualReplacementError < StandardError; end
   
@@ -31,13 +33,6 @@ module Pouch
   def page_url= str
     define_method :visit do
       self.browser.goto str
-    end
-  end
-
-  def element tag, name, identifier, *args, &block
-    define_method name do
-      return browser.element_for tag, identifier unless block_given?
-      block.call browser.send('element_for', tag, identifier), *args
     end
   end
 
