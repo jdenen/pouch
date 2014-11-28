@@ -124,7 +124,7 @@ module Pouch
       define_method "when_#{name}_not_visible" do
         result = negative_timer { !browser.element(tag, identifier).visible? }
         unless result
-          raise ElementVisibilityError, "#{name} element is still visible"
+          raise VisibilityError, "#{name} element is still visible"
         end
         self
       end
@@ -139,7 +139,7 @@ module Pouch
       define_method "when_#{name}_not_present" do
         result = negative_timer { !browser.element(tag, identifier).present? }
         unless result
-          raise ElementPresenceError, "#{name} element is still present"
+          raise PresenceError, "#{name} element is still present"
         end
         self
       end

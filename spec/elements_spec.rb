@@ -62,8 +62,40 @@ describe Pouch::Elements do
       end
 
       it "throws an error with replacement but no standard method" do
-        expect{ what.replacement }.to raise_error Pouch::ContextualReplacementError, /Page defined no standard method for replacement/
+        expect{ what.replacement }.to raise_error Pouch::ReplacementError, /Page defined no standard method for replacement/
       end
+    end
+  end
+
+  describe "#when_element_not_visible" do
+    Page.send(:link, :invisible, id:'hidden')
+
+    let(:page){ Page.new 'webdriver' }
+    
+    it "returns the page object instance if valid" do
+      expect(page).to receive(:negative_timer).and_return(true)
+      expect(page.when_invisible_not_visible).to eq page
+    end
+
+    it "raises an VisibilityError if invalid" do
+      expect(page).to receive(:negative_timer).and_return(false)
+      expect{ page.when_invisible_not_visible }.to raise_error Pouch::VisibilityError, /invisible element/
+    end
+  end
+
+  describe "#when_element_not_present" do
+    Page.send(:link, :gone, id:'not-here')
+
+    let(:page){ Page.new 'webdriver' }
+
+    it "returns the page object instance if valid" do
+      expect(page).to receive(:negative_timer).and_return(true)
+      expect(page.when_gone_not_present).to eq page
+    end
+
+    it "raises a PresenceError if invalid" do
+      expect(page).to receive(:negative_timer).and_return(false)
+      expect{ page.when_gone_not_present }.to raise_error Pouch::PresenceError, /gone element/
     end
   end
 

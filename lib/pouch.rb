@@ -4,7 +4,10 @@ require "pouch/elements"
 module Pouch
   include Elements
 
-  class ContextualReplacementError < StandardError; end
+  class ContextArgumentError < StandardError; end
+  class ReplacementError < StandardError; end
+  class VisibilityError < StandardError; end
+  class PresenceError < StandardError; end
   
   def self.included base
     base.extend self
@@ -61,7 +64,7 @@ module Pouch
   def get_match context
     methods.select{ |mthd| mthd.to_s.start_with? "#{context}_" }.each_with_object([]) do |mthd, array|
       unless respond_to? mthd.to_s.gsub("#{context}_", "")
-        raise ContextualReplacementError, "#{self.class} defined no standard method for replacement '#{mthd}'"
+        raise ReplacementError, "#{self.class} defined no standard method for replacement '#{mthd}'"
       end
       array << mthd
     end
@@ -77,7 +80,7 @@ module Pouch
     if [Array, String, Symbol].include? context.class
       [context].flatten.map(&:to_s)
     else
-      raise "Cannot define Pouch context as #{context.class}"
+      raise ContextArgumentError, "cannot define Pouch context with #{context.class}"
     end
   end
   

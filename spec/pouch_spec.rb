@@ -98,11 +98,11 @@ describe Pouch do
       end
 
       it "raises StandardError with Hash argument" do
-        expect{ obj.call({}) }.to raise_error(StandardError, /Hash/)
+        expect{ obj.call({}) }.to raise_error(Pouch::ContextArgumentError, /Hash/)
       end
 
       it "raises StandardError if one argument is a Number" do
-        expect{ obj.call(['one', 2]) }.to raise_error(StandardError, /Fixnum/)
+        expect{ obj.call(['one', 2]) }.to raise_error(Pouch::ContextArgumentError, /Fixnum/)
       end
     end
   end
