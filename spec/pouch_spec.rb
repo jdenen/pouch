@@ -21,13 +21,13 @@ describe Pouch do
 
     it "creates @timeout variable" do
       obj = Page2.new 'webdriver'
-      expect(obj.instance_variable_get :@timeout).to eq 10
+      expect(obj.instance_variable_get :@timeout).to eq 5
     end
 
     context "with :timeout option" do
       it "creates @timeout variable" do
-        obj = Page2.new 'webdriver', timeout: 5
-        expect(obj.instance_variable_get :@timeout).to eq 5
+        obj = Page2.new 'webdriver', timeout: 10
+        expect(obj.instance_variable_get :@timeout).to eq 10
       end
     end
         
@@ -125,14 +125,14 @@ describe Pouch do
     context "without setting a custom timeout interval" do
       it "returns the page object default timeout" do
         obj = Page.new 'webdriver'
-        expect(obj.timeout).to eq 10
+        expect(obj.timeout).to eq 5
       end
     end
 
     context "after passing :timeout option to #initialize" do
       it "returns the custom timeout" do
-        obj = Page.new 'webdriver', timeout: 5
-        expect(obj.timeout).to eq 5
+        obj = Page.new 'webdriver', timeout: 10
+        expect(obj.timeout).to eq 10
       end
     end
   end

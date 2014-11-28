@@ -21,7 +21,7 @@ module Pouch
     
     @browser = browser
     @context = standardize opts[:context] if opts[:context]
-    @timeout = opts[:timeout] || 10
+    @timeout = opts[:timeout] || 5
 
     set_timer if self.respond_to? :set_timer
     visit if self.respond_to?(:visit) && start
