@@ -2,10 +2,10 @@ module Pouch
   module Elements
 
     def element tag, name, identifier, *args, &block
-      define_method name do
-        timer { browser.element(tag, identifier).visible? }
+      define_method name, ->(time = nil) do
+        timer(time){ browser.element(tag, identifier).visible? }
         return browser.element tag, identifier unless block_given?
-        block.call browser.send(:element, tag, identifier), *args
+        block.call browser.send(:element, tag, identifier), *args        
       end
 
       define_waiting_methods tag, name, identifier, *args, &block
@@ -121,23 +121,23 @@ module Pouch
     private
 
     def define_waiting_methods tag, name, identifier, *args, &block
-      define_method "when_#{name}_not_visible" do
-        result = negative_timer { !browser.element(tag, identifier).visible? }
+      define_method "when_#{name}_not_visible", ->(time = nil) do
+        result = negative_timer(time){ !browser.element(tag, identifier).visible? }
         unless result
           raise VisibilityError, "#{name} element is still visible"
         end
         self
       end
       
-      define_method "when_#{name}_present" do
-        timer { browser.element(tag, identifier).present? }
+      define_method "when_#{name}_present", ->(time = nil) do
+        timer(time){ browser.element(tag, identifier).present? }
         html_element = browser.element tag, identifier
         return located_element unless block_given?
         block.call located_element, *args
       end
 
-      define_method "when_#{name}_not_present" do
-        result = negative_timer { !browser.element(tag, identifier).present? }
+      define_method "when_#{name}_not_present", ->(time = nil) do
+        result = negative_timer(time){ !browser.element(tag, identifier).present? }
         unless result
           raise PresenceError, "#{name} element is still present"
         end
@@ -145,7 +145,8 @@ module Pouch
       end
     end
 
-    def timer &block
+    def timer n, &block
+      interval = n.nil? ? timeout : n
       timed_out = Time.now + timeout
       until Time.now > timed_out
         result = yield block rescue false
@@ -153,8 +154,9 @@ module Pouch
       end
     end
 
-    def negative_timer &block
-      timed_out = Time.now + timeout
+    def negative_timer n, &block
+      interval = n.nil? ? timeout : n
+      timed_out = Time.now + interval
       until Time.now > timed_out
         result = yield block rescue false
         return result if result

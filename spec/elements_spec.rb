@@ -28,9 +28,14 @@ describe Pouch::Elements do
       expect(page.blocked).to eq "www.test.com"
     end
 
-    it "calls #timer to wait for visible element" do
+    it "calls #timer to wait for default interval" do
       expect(page).to receive(:timer)
       page.generic
+    end
+
+    it "calls #timer with custom interval" do
+      expect(page).to receive(:timer).with(20)
+      page.generic 20
     end
 
     it "generates #when_generic_not_visible" do
@@ -81,6 +86,11 @@ describe Pouch::Elements do
       expect(page).to receive(:negative_timer).and_return(false)
       expect{ page.when_invisible_not_visible }.to raise_error Pouch::VisibilityError, /invisible element/
     end
+
+    it "accepts an optional interval for timeout" do
+      expect(page).to receive(:negative_timer).with(20).and_return(true)
+      page.when_invisible_not_visible 20
+    end
   end
 
   describe "#when_element_not_present" do
@@ -96,6 +106,11 @@ describe Pouch::Elements do
     it "raises a PresenceError if invalid" do
       expect(page).to receive(:negative_timer).and_return(false)
       expect{ page.when_gone_not_present }.to raise_error Pouch::PresenceError, /gone element/
+    end
+
+    it "accepts an optional interval for timeout" do
+      expect(page).to receive(:negative_timer).with(20).and_return(true)
+      page.when_gone_not_present 20
     end
   end
 
