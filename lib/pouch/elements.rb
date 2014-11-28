@@ -156,7 +156,7 @@ module Pouch
     def negative_timer &block
       timed_out = Time.now + timeout
       until Time.now > timed_out
-        result = yield_block
+        result = yield block rescue false
         return result if result
       end
       false
