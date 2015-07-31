@@ -61,14 +61,15 @@ Pouch page objects can be created with contexts, allowing a single method call t
 
 ```ruby
 class Page
-include Pouch
-link(:sign_in, id: 'desktop-login')
-link(:mobile_sign_in, id: 'mobile-login')
+  include Pouch
+  link(:sign_in, id: 'desktop-login')
+  link(:mobile_sign_in, id: 'mobile-login')
+end
 ```
 
 ```ruby
 # script.rb
-page = Page.new browser_instance, context: ENV['CONTEXT']
+page = Page.new @browser, context: ENV['CONTEXT']
 page.sign_in.attribute_value 'id' == 'desktop-login'
 ```
 
@@ -76,7 +77,7 @@ page.sign_in.attribute_value 'id' == 'desktop-login'
 $ ruby script.rb
 #=> true
 $ CONTEXT=mobile ruby script.rb
-#=> false
+#=> true
 ```
 
 ## Contributing
