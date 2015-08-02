@@ -1,8 +1,10 @@
 require "pouch/version"
 require "pouch/dsl/elements"
+require "pouch/dsl/attributes"
 
 module Pouch
   include DSL::Elements
+  include DSL::Attributes
 
   class ContextArgumentError < StandardError; end
   class ReplacementError < StandardError; end
@@ -37,12 +39,6 @@ module Pouch
 
   def timeout
     @timeout
-  end
-  
-  def page_url= str
-    define_method :visit do
-      self.browser.goto str
-    end
   end
 
   private

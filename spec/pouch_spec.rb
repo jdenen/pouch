@@ -46,14 +46,14 @@ describe Pouch do
     end
 
     context "when instance responds to #visit" do
-      it "doesn't navigate to page_url if start=false" do
-        Page2.send :page_url=, 'url'
+      it "doesn't navigate to url if start=false" do
+        Page2.send :url, 'url'
         driver = double 'webdriver'
         expect(driver).to_not receive(:goto)
         Page2.new driver, false
       end
 
-      it "navigates to page_url if start=true" do
+      it "navigates to url if start=true" do
         driver = double 'webdriver'
         expect(driver).to receive(:goto).with('url')
         Page2.new driver, true, context: 'test'
