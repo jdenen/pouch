@@ -1,14 +1,12 @@
 require "pouch/version"
-require "pouch/elements"
+require "pouch/dsl/elements"
 
 module Pouch
-  include Elements
+  include DSL::Elements
 
   class ContextArgumentError < StandardError; end
   class ReplacementError < StandardError; end
-  class VisibilityError < StandardError; end
-  class PresenceError < StandardError; end
-  
+    
   def self.included base
     base.extend self
   end

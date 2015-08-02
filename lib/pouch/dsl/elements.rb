@@ -1,6 +1,9 @@
-module Pouch
+module Pouch::DSL
   module Elements
-
+    
+    class VisibilityError < StandardError; end
+    class PresenceError < StandardError; end
+    
     def element tag, name, identifier, *args, &block
       define_method name, ->(time = nil) do
         timer(time){ browser.element(tag, identifier).visible? }
