@@ -27,16 +27,6 @@ describe Pouch::DSL::Elements do
       expect(page.blocked).to eq "www.test.com"
     end
 
-    it "calls #timer to wait for default interval" do
-      expect(page).to receive(:timer)
-      page.generic
-    end
-
-    it "calls #timer with custom interval" do
-      expect(page).to receive(:timer).with(20)
-      page.generic 20
-    end
-
     it "generates #when_generic_not_visible" do
       expect(page).to respond_to :when_generic_not_visible
     end
@@ -51,7 +41,7 @@ describe Pouch::DSL::Elements do
 
     context "with context" do
       it "uses the replacement method" do
-        expect(browser).to receive(:element).twice.with(:a, id:'generic-diff')
+        expect(browser).to receive(:element).with(id:'generic-diff')
         expect(diff.generic).to eq element
       end
 
@@ -61,7 +51,7 @@ describe Pouch::DSL::Elements do
       end
 
       it "uses the standard method when context matches no replacement" do
-        expect(browser).to receive(:element).twice.with(:a, id:'generic')
+        expect(browser).to receive(:element).with(id:'generic')
         expect(Page.new(browser, context: 'test').generic).to eq element
       end
 

@@ -3,12 +3,16 @@ module Pouch::DSL
     
     class VisibilityError < StandardError; end
     class PresenceError < StandardError; end
+
+    # class Element
+    #   def initialize tag, identifier, next_object = self
+    #   end
+    # end
     
     def element tag, name, identifier, *args, &block
-      define_method name, ->(time = nil) do
-        timer(time){ browser.element(tag, identifier).visible? }
-        return browser.element tag, identifier unless block_given?
-        block.call browser.send(:element, tag, identifier), *args        
+      define_method name do
+        return browser.element(identifier) unless block_given?
+        block.call browser.send(:element, identifier), *args        
       end
 
       define_waiting_methods tag, name, identifier, *args, &block
