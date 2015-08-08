@@ -1,6 +1,7 @@
 require "pouch/version"
 require "pouch/elements"
 require "pouch/attributes"
+require "pouch/html_object"
 
 module Pouch
   include Elements
