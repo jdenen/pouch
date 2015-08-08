@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Pouch::DSL::Attributes do
+describe Pouch::Attributes do
 
   class Page
     include Pouch

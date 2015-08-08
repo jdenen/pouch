@@ -1,10 +1,10 @@
 require "pouch/version"
-require "pouch/dsl/elements"
-require "pouch/dsl/attributes"
+require "pouch/elements"
+require "pouch/attributes"
 
 module Pouch
-  include DSL::Elements
-  include DSL::Attributes
+  include Elements
+  include Attributes
 
   class ContextArgumentError < StandardError; end
   class ReplacementError < StandardError; end

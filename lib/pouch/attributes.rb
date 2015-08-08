@@ -1,4 +1,4 @@
-module Pouch::DSL
+module Pouch
   module Attributes
 
     def url address = nil

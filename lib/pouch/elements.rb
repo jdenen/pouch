@@ -1,13 +1,8 @@
-module Pouch::DSL
+module Pouch
   module Elements
     
     class VisibilityError < StandardError; end
     class PresenceError < StandardError; end
-
-    # class Element
-    #   def initialize tag, identifier, next_object = self
-    #   end
-    # end
     
     def element tag, name, identifier, *args, &block
       define_method name do
